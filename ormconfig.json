@@ -1,0 +1,19 @@
+{
+  "type": "mysql",
+  "host": "api.eastflag.co.kr",
+  "port": 3306,
+  "username": "kait",
+  "password": "kaitb2c",
+  "database": "kaitb2cdb",
+  "synchronize": true,
+  "logging": true,
+  "entities": [
+    "src/entity/**/*.ts"
+  ],
+  "migrations": [
+    "src/migration/**/*.ts"
+  ],
+  "subscribers": [
+    "src/subscriber/**/*.ts"
+  ]
+}
