@@ -1,10 +1,19 @@
-import {CreateDateColumn, Entity, UpdateDateColumn, PrimaryColumn, Column, OneToMany} from "typeorm";
+import {
+  CreateDateColumn,
+  Entity,
+  UpdateDateColumn,
+  PrimaryColumn,
+  Column,
+  OneToMany,
+  PrimaryGeneratedColumn, ManyToOne
+} from "typeorm";
 import {User} from "./User";
+import {Category} from "./Category";
 
 @Entity()
 export class Question {
-  @PrimaryColumn({length: 100})
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   // 정답 보기
   @Column({length: 100})
@@ -16,4 +25,13 @@ export class Question {
 
   @Column({length: 500, nullable: true})
   answer: string;
+
+  @CreateDateColumn()
+  created: Date;
+
+  @UpdateDateColumn()
+  updated: Date;
+
+  @ManyToOne(type => Category, category => category.questions, {onDelete: 'CASCADE', onUpdate: "CASCADE"})
+  category: Category;
 }
