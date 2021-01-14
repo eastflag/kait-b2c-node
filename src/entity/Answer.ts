@@ -2,13 +2,10 @@ import {
   CreateDateColumn,
   Entity,
   UpdateDateColumn,
-  PrimaryColumn,
   Column,
-  OneToMany,
   PrimaryGeneratedColumn, ManyToOne
 } from "typeorm";
 import {User} from "./User";
-import {Category} from "./Category";
 
 @Entity()
 export class Answer {

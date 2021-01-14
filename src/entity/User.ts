@@ -1,5 +1,4 @@
-import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
-import {Question} from "./Question";
+import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {Answer} from "./Answer";
 
 @Entity()
@@ -13,6 +12,6 @@ export class User {
   @Column({length: 100})
   password: string;
 
-  @OneToMany(type => Answer, answer => answer.category)
+  @OneToMany(type => Answer, answer => answer.user)
   answers: Answer[];
 }

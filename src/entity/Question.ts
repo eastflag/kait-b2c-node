@@ -1,13 +1,4 @@
-import {
-  CreateDateColumn,
-  Entity,
-  UpdateDateColumn,
-  PrimaryColumn,
-  Column,
-  OneToMany,
-  PrimaryGeneratedColumn, ManyToOne
-} from "typeorm";
-import {User} from "./User";
+import {Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
 import {Category} from "./Category";
 
 @Entity()
