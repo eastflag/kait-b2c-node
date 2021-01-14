@@ -7,6 +7,6 @@ routes.get('/login', UserController.login);
 
 routes.post('/signUp', UserController.signUp);
 
-routes.post('submitAnswer', UserController.submitAnswer);
+routes.post('/submitAnswer', UserController.submitAnswer);
 
 export default routes;

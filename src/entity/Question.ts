@@ -6,6 +6,10 @@ export class Question {
   @PrimaryGeneratedColumn()
   id: number;
 
+  // 항목명
+  @Column({length: 100})
+  name: string;
+
   // 정답 보기
   @Column({length: 100})
   example: string;
