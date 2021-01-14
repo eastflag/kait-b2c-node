@@ -18,6 +18,10 @@ export class Category {
   @Column({length: 100, nullable: true})
   chapter: string;
 
+  // 페이지
+  @Column()
+  page_number: number;
+
   @CreateDateColumn()
   created: Date;
 

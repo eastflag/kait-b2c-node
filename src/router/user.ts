@@ -3,18 +3,10 @@ import {UserController} from "../controller/UserController";
 
 const routes = Router();
 
-routes.get('/rooms', UserController.getRooms);
+routes.get('/login', UserController.login);
 
-routes.get('/room/:id', UserController.getRoom);
+routes.post('/signUp', UserController.signUp);
 
-routes.post('/room', UserController.addRoom);
-
-routes.delete('/room', UserController.removeRoom);
-
-routes.put('/room/:id', UserController.modifyRoom);
-
-routes.post('/room/user/:id', UserController.addUser);
-
-routes.get('/password', UserController.checkPassword);
+routes.post('submitAnswer', UserController.submitAnswer);
 
 export default routes;
