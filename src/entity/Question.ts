@@ -12,14 +12,14 @@ export class Question {
 
   // 정답 보기
   @Column({length: 100})
-  example: string;
+  examples: string;
 
   // 라텍스 수식: 빈칸은 골뱅이
   @Column({length: 100})
-  equation: string;
+  equations: string;
 
   @Column({length: 500, nullable: true})
-  answer: string;
+  answers: string;
 
   @CreateDateColumn()
   created: Date;

@@ -3,11 +3,12 @@ import {
   Entity,
   UpdateDateColumn,
   Column,
-  PrimaryGeneratedColumn, ManyToOne
+  PrimaryGeneratedColumn, ManyToOne, Unique
 } from "typeorm";
 import {User} from "./User";
 
 @Entity()
+@Unique(['questionId', 'user'])
 export class Answer {
   @PrimaryGeneratedColumn()
   id: number;
@@ -16,7 +17,7 @@ export class Answer {
   answer: string;
 
   @Column()
-  question_id: number;
+  questionId: number;
 
   @Column()
   score: boolean;
