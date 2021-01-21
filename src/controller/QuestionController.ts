@@ -6,9 +6,9 @@ import {Answer} from "../entity/Answer";
 export class QuestionController {
   static getQuestion = async (req, res) => {
     const {userId} = req.query;
-    const {category_id} = req.params;
+    const {chapter_id} = req.params;
 
-    const db =getConnection().getRepository(Question)
+    const db = getConnection().getRepository(Question)
         .createQueryBuilder('question')
         .select(['question.id as id', 'question.name as name', 'question.examples as examples',
           'question.equations as equations', 'question.answers as answers'])
@@ -17,7 +17,7 @@ export class QuestionController {
               .from(Answer, 'answer')
               .where('answer.userId = :userId and answer.questionId = question.id', {userId: userId})
         }, 'userAnswers')
-        .where('question.categoryId = :category_id', {category_id})
+        .where('question.categoryId = :category_id', {chapter_id})
 
     const questions = await db.getRawMany();
 

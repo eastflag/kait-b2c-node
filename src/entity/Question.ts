@@ -1,10 +1,14 @@
 import {Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
-import {Category} from "./Category";
+import {Chapter} from "./Chapter";
 
 @Entity()
 export class Question {
   @PrimaryGeneratedColumn()
   id: number;
+
+  // 페이지
+  @Column()
+  page_number: number;
 
   // 항목명
   @Column({length: 100})
@@ -27,6 +31,6 @@ export class Question {
   @UpdateDateColumn()
   updated: Date;
 
-  @ManyToOne(type => Category, category => category.questions, {onDelete: 'CASCADE', onUpdate: "CASCADE"})
-  category: Category;
+  @ManyToOne(type => Chapter, chapter => chapter.questions, {onDelete: 'CASCADE', onUpdate: "CASCADE"})
+  chapter: Chapter;
 }
