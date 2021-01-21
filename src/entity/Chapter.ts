@@ -1,10 +1,10 @@
 import {
   Column,
   CreateDateColumn,
-  Entity,
+  Entity, JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn, RelationId,
   UpdateDateColumn
 } from "typeorm";
 import {Question} from "./Question";
@@ -30,6 +30,10 @@ export class Chapter {
   updated: Date;
 
   @ManyToOne(type => Textbook, textbook => textbook.chapters)
+  @JoinColumn({
+    name: 'textbookId',
+    referencedColumnName: 'id',
+  })
   textbook: Textbook;
 
   @OneToMany(type => Question, question => question.chapter)

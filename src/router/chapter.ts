@@ -3,7 +3,8 @@ import {ChapterController} from "../controller/ChapterController";
 
 const routes = Router();
 
-routes.get('/chapter', ChapterController.getChapter);
-routes.post('/chapter', ChapterController.addChapter);
+routes.get('/textbook_id/:textbook_id', ChapterController.getChapterByTextbookId);
+routes.get('/id/:id', ChapterController.getChapter);
+routes.post('', ChapterController.addChapter);
 
 export default routes;

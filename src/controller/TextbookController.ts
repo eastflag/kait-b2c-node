@@ -17,7 +17,7 @@ export class TextbookController {
     await getConnection().createQueryBuilder()
       .insert()
       .into(Textbook)
-      .values(req.body)
+      .values(textbook)
       .execute();
 
     const result = new ResultVo(0, "success");
