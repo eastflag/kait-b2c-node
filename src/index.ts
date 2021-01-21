@@ -42,7 +42,7 @@ createConnection(/*...*/).then(async connection => {
   console.log("Here you can setup and run express/koa/any other framework.");*/
 
   // start express server --------------------------------
-  app.use(bodyParser());
+  app.use(bodyParser.json());
 
   app.use(cors());
 
