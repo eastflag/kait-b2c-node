@@ -4,7 +4,7 @@ import {Question} from "../entity/Question";
 import {Answer} from "../entity/Answer";
 
 export class QuestionController {
-  static getQuestion = async (req, res) => {
+  static getQuestionByChapterId = async (req, res) => {
     const {userId} = req.query;
     const {chapter_id} = req.params;
 
@@ -17,7 +17,7 @@ export class QuestionController {
               .from(Answer, 'answer')
               .where('answer.userId = :userId and answer.questionId = question.id', {userId: userId})
         }, 'userAnswers')
-        .where('question.categoryId = :category_id', {chapter_id})
+        .where('question.chapterId = :chapter_id', {chapter_id})
 
     const questions = await db.getRawMany();
 

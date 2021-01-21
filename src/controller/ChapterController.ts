@@ -1,6 +1,5 @@
 import {getConnection} from "typeorm";
 import {Chapter} from "../entity/Chapter";
-import {Textbook} from "../entity/Textbook";
 import {ResultVo} from "../dto/ResultVo";
 
 export class ChapterController {
@@ -28,7 +27,6 @@ export class ChapterController {
 
   static addChapter = async (req, res) => {
     const chapter = req.body;
-    const {textbookId} = req.body;
     await getConnection().createQueryBuilder()
       .insert()
       .into(Chapter)

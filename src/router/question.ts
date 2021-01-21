@@ -3,6 +3,6 @@ import {QuestionController} from "../controller/QuestionController";
 
 const routes = Router();
 
-routes.get('/:category_id', QuestionController.getQuestion);
+routes.get('/chapter_id/:chapter_id', QuestionController.getQuestionByChapterId);
 
 export default routes;
