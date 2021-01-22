@@ -1,7 +1,7 @@
 import {ResultVo} from "../dto/ResultVo";
 import {Answer} from "../entity/Answer";
 import {User} from "../entity/User";
-import {getConnection} from "typeorm";
+import {getConnection, getManager} from "typeorm";
 
 export class UserController {
   static login = async (req, res) => {
@@ -13,6 +13,26 @@ export class UserController {
   static signUp = async (req, res) => {
     const result = new ResultVo(0, "success");
     res.send(result);
+  }
+
+  static getTextBook = async (req, res) => {
+    const {userId} = req.query
+
+    const entityManager = getManager();
+    const rawData = await entityManager.query(`
+        select t.*, 
+            (select count(*) from question where question.chapterId in (select c.id from chapter c where c.textbookId = t.id)) as total_question,
+            (select count(*) from answer
+                where answer.userId = ${userId} and  answer.questionId in 
+                    (select question.id from question where question.chapterId in (select chapter.id from chapter where chapter.textbookId = t.id))) as total_progress,
+            (select answer.updated from answer
+              where answer.userId = ${userId} and answer.questionId in (select question.id from question where question.chapterId in (select chapter.id from chapter where chapter.textbookId = t.id))
+              order by answer.updated desc
+              limit 1) as recent_date
+        from textbook t
+    `);
+
+    res.send(rawData);
   }
 
   static submitAnswer = async (req, res) => {
