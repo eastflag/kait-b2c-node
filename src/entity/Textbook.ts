@@ -14,6 +14,10 @@ export class Textbook {
   @Column({length: 100})
   name: string;
 
+  // 교재 이미지 주소
+  @Column({length: 1024})
+  image_url: string;
+
   // 학년과 학기
   @Column({length: 100})
   semester: string;
