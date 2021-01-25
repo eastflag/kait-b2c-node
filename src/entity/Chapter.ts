@@ -17,11 +17,19 @@ export class Chapter {
 
   // 단원 코드
   @Column({length: 100, nullable: true})
+  category: string;
+
+  // 단원 코드
+  @Column({length: 100, nullable: true})
   code: string;
 
   // 단원명
   @Column({length: 100, nullable: true})
   name: string;
+
+  // 시작 페이지
+  @Column({default: 0})
+  start_page: number;
 
   @CreateDateColumn()
   created: Date;
