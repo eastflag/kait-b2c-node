@@ -58,4 +58,17 @@ export class UserController {
     const result = new ResultVo(0, "success");
     res.send(result);
   }
+
+  static getChapterResult = async (req, res) => {
+    const {userId} = req.query
+    const {chapter_id} = req.params;
+
+    const entityManager = getManager();
+    const rawData = await entityManager.query(`
+      select A.*, Q.name from answer A inner join question Q on A.questionId = Q.id
+      where A.userId = ${userId} and Q.chapterId = ${chapter_id}
+    `);
+
+    res.send(rawData);
+  }
 }
