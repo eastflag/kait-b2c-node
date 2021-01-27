@@ -2,15 +2,30 @@ import {ResultVo} from "../dto/ResultVo";
 import {Answer} from "../entity/Answer";
 import {User} from "../entity/User";
 import {getConnection, getManager} from "typeorm";
+const jwt = require('jsonwebtoken');
+const randToken = require('rand-token');
+import jwtOptions from '../config/jwtOptions';
 
 export class UserController {
   static login = async (req, res) => {
-
+    const payload = {
+      id: 1,
+      email: 'eastflag@gmail.com'
+    }
     const result = new ResultVo(0, "success");
+    result.data = {
+      token: jwt.sign(payload, jwtOptions.secretKey, jwtOptions.options),
+      refreshToken: randToken.uid(256)
+    }
     res.send(result);
   }
 
   static signUp = async (req, res) => {
+    await getConnection().createQueryBuilder()
+      .insert()
+      .into(User)
+      .values(req.body)
+      .execute();
     const result = new ResultVo(0, "success");
     res.send(result);
   }
