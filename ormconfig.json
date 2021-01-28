@@ -1,10 +1,10 @@
 {
   "type": "mysql",
-  "host": "api.eastflag.co.kr",
+  "host": "kr-cai-rds-dev.ciauy53ebb8b.ap-northeast-2.rds.amazonaws.com",
   "port": 3306,
-  "username": "kait",
-  "password": "kaitb2c",
-  "database": "kaitb2cdb",
+  "username": "b2c",
+  "password": "b2c123456",
+  "database": "b2cdb",
   "synchronize": true,
   "logging": true,
   "entities": [
