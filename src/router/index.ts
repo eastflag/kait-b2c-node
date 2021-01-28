@@ -4,13 +4,16 @@ import textbook from './textbook';
 import chapter from './chapter';
 import question from './question';
 import answer from './answer';
+import unauth from './unauth';
+import jwtUtils from "../utils/jwtUtils";
 
 const routes = Router();
 
-routes.use('/user', user);
-routes.use('/textbook', textbook);
-routes.use('/chapter', chapter);
-routes.use('/question', question);
-routes.use('/answer', answer);
+routes.use('/unauth', unauth);
+routes.use('/user', jwtUtils.verifyToken, user);
+routes.use('/textbook', jwtUtils.verifyToken, textbook);
+routes.use('/chapter', jwtUtils.verifyToken, chapter);
+routes.use('/question', jwtUtils.verifyToken, question);
+routes.use('/answer', jwtUtils.verifyToken, answer);
 
 export default routes;
