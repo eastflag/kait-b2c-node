@@ -3,17 +3,23 @@ const jwt = require('jsonwebtoken');
 
 const jwtUtils = {
   verifyToken: async (req, res, next) => {
-    const token = req.headers['x-access-token']
     let decoded;
-    try {
-      // verify를 통해 값 decode!
-      decoded = jwt.verify(token, jwtOptions.secretKey);
-      console.log(decoded);
+    let token;
 
-      if (decoded) {
-        next();
-      } else {
+    try {
+      token = req.headers['Authorization'] || req.headers['authorization'];
+
+      if (!token) {
         res.status(401).json({ error: 'unauthorized' });
+      } else {
+        // verify를 통해 값 decode!
+        decoded = jwt.verify(token.replace('Bearer ', ''), jwtOptions.secretKey);
+        console.log(decoded);
+        if (decoded) {
+          next();
+        } else {
+          res.status(401).json({ error: 'unauthorized' });
+        }
       }
     } catch (err) {
       if (err.message === 'jwt expired') {
