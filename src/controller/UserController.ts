@@ -18,7 +18,7 @@ export class UserController {
                 where answer.userId = ${userId} and  answer.questionId in 
                     (select question.id from question where question.chapterId in (select chapter.id from chapter where chapter.textbookId = t.id))) as total_progress,
             (select sum(answer.score) from answer
-                where answer.userId = 1 and answer.questionId in (select question.id from question where question.chapterId in 
+                where answer.userId = ${userId} and answer.questionId in (select question.id from question where question.chapterId in 
                 (select chapter.id from chapter where chapter.textbookId = t.id))) as total_score,
             (select answer.updated from answer
               where answer.userId = ${userId} and answer.questionId in (select question.id from question where question.chapterId in (select chapter.id from chapter where chapter.textbookId = t.id))
