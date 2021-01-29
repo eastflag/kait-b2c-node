@@ -33,14 +33,25 @@ export class UnAuthController {
   }
 
   static signUp = async (req, res) => {
+    const {email, password} = req.body;
+
     try {
-      await getConnection().createQueryBuilder()
-        .insert()
-        .into(User)
-        .values(req.body)
-        .execute();
-      const result = new ResultVo(0, "success");
-      res.send(result);
+      const user =await getConnection().getRepository(User)
+        .createQueryBuilder('user')
+        .where('email = :email', {email})
+        .getOne();
+      console.log(user);
+      if (user) {
+        res.send(new ResultVo(100, "email exists"));
+      } else {
+        await getConnection().createQueryBuilder()
+          .insert()
+          .into(User)
+          .values({email, password})
+          .execute();
+        const result = new ResultVo(0, "success");
+        res.send(result);
+      }
     } catch(err) {
       res.send(new ResultVo(100, err.message));
     }
