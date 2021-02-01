@@ -11,7 +11,12 @@ import {Question} from "./entity/Question";
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(server);
+const io = socketIO(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"]
+  }
+});
 
 createConnection(/*...*/).then(async connection => {
 
