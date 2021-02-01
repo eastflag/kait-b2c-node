@@ -3,11 +3,15 @@ import router from './router';
 import bodyParser from 'body-parser';
 import {createConnection} from "typeorm";
 import cors from 'cors';
+import http from 'http';
+const socketIO = require('socket.io');
 import {User} from "./entity/User";
 import {Question} from "./entity/Question";
 
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIO(server);
 
 createConnection(/*...*/).then(async connection => {
 
@@ -50,8 +54,22 @@ createConnection(/*...*/).then(async connection => {
 
   app.use('/api', router);
 
-  app.listen(8080, () => {
+  server.listen(8080, () => {
     console.log('server is listening 8080');
   });
 
 }).catch(error => console.log(error));
+
+// socketio 문법
+io.on('connection', socket => {
+  console.log('User connected');
+  socket.on('send message', (item) => {
+    const msg = item.name + ' : ' + item.message;
+    console.log(msg);
+    io.emit('receive message', {name:item.name, message:item.message});
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnect');
+  });
+});
