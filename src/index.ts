@@ -12,10 +12,10 @@ import {Question} from "./entity/Question";
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST", "PUT", "DELETE"]
-  }
+  // cors: {
+  //   origin: "http://localhost:3000",
+  //   methods: ["GET", "POST", "PUT", "DELETE"]
+  // }
 });
 
 createConnection(/*...*/).then(async connection => {
@@ -66,12 +66,12 @@ createConnection(/*...*/).then(async connection => {
 }).catch(error => console.log(error));
 
 // socketio 문법
-io.on('connection', socket => {
+io.of('/chatServer').on('connection', socket => {
   console.log('User connected');
-  socket.on('send message', (item) => {
-    const msg = item.name + ' : ' + item.message;
-    console.log(msg);
-    io.emit('receive message', {name:item.name, message:item.message});
+  socket.on('message', (item) => {
+    // const msg = item.name + ' : ' + item.message;
+    console.log(item);
+    // io.emit('message', {name:item.name, message:item.message});
   });
 
   socket.on('disconnect', () => {
