@@ -5,6 +5,7 @@ import {getConnection, getManager} from "typeorm";
 const jwt = require('jsonwebtoken');
 const randToken = require('rand-token');
 import jwtOptions from '../config/jwtOptions';
+import {ChannelHistory} from "../entity/ChannelHistory";
 
 export class UserController {
   static getTextBook = async (req, res) => {
@@ -62,5 +63,14 @@ export class UserController {
     `);
 
     res.send(rawData);
+  }
+
+  static saveChannelHistory = async (req, res) => {
+    const {userId, questionId, type} = req.query;
+
+    await getConnection().createQueryBuilder().insert().into(ChannelHistory).values({userId, questionId, type}).execute();
+
+    const result = new ResultVo(0, "success");
+    res.send(result);
   }
 }
