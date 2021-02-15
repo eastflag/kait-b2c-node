@@ -1,27 +1,20 @@
 import {Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Unique, UpdateDateColumn} from "typeorm";
 import {Answer} from "./Answer";
 
-@Entity()
-@Unique(['email'])
-export class User {
+@Entity("user_role")
+export class UserRole {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({length: 100})
-  email: string;
+  @Column()
+  userId: number;
 
-  @Column({nullable: true})
-  name: string;
-
-  @Column({length: 100})
-  password: string;
+  @Column()
+  roleId: number;
 
   @CreateDateColumn()
   created: Date;
 
   @UpdateDateColumn()
   updated: Date;
-
-  @OneToMany(type => Answer, answer => answer.user)
-  answers: Answer[];
 }

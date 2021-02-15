@@ -1,8 +1,9 @@
 import {ResultVo} from "../dto/ResultVo";
 import jwtOptions from "../config/jwtOptions";
-import {getConnection} from "typeorm";
+import {getConnection, getManager} from "typeorm";
 import {User} from "../entity/User";
 import {Textbook} from "../entity/Textbook";
+import {createDeflateRaw} from "zlib";
 const jwt = require('jsonwebtoken');
 const randToken = require('rand-token');
 
@@ -17,9 +18,19 @@ export class UnAuthController {
     console.log(user);
 
     if (user) {
+      const entityManager = getManager();
+      const rawData = await entityManager.query(`
+        select r.role_name from role r inner join user_role ur on r.id = ur.roleId
+        where ur.userId = ${user.id};
+      `);
+      console.log(rawData); // [ TextRow { role_name: 'user' } ]
+      const roles = rawData.map(role => role['role_name']);
+
       const payload = {
         id: user.id,
-        email: email
+        email: email,
+        name: user.name,
+        roles
       }
       const result = new ResultVo(0, "success");
       result.data = {

@@ -2,26 +2,16 @@ import {Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Uni
 import {Answer} from "./Answer";
 
 @Entity()
-@Unique(['email'])
-export class User {
+export class Role {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({length: 100})
-  email: string;
-
-  @Column({nullable: true})
-  name: string;
-
-  @Column({length: 100})
-  password: string;
+  @Column()
+  role_name: string;
 
   @CreateDateColumn()
   created: Date;
 
   @UpdateDateColumn()
   updated: Date;
-
-  @OneToMany(type => Answer, answer => answer.user)
-  answers: Answer[];
 }
