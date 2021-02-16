@@ -4,7 +4,10 @@ import bodyParser from 'body-parser';
 import {createConnection} from "typeorm";
 import cors from 'cors';
 import http from 'http';
+import users from './model/users';
+
 const socketIO = require('socket.io');
+
 import {User} from "./entity/User";
 import {Question} from "./entity/Question";
 
@@ -68,13 +71,64 @@ createConnection(/*...*/).then(async connection => {
 // socketio 문법
 io.of('/chatServer').on('connection', socket => {
   console.log('User connected');
-  socket.on('message', (item) => {
-    // const msg = item.name + ' : ' + item.message;
-    console.log(item);
-    // io.emit('message', {name:item.name, message:item.message});
+
+  socket.on('join', ({ questionId, userId, userName, questionName }, cb) => {
+    console.log('join');
+    const { error, user } = users.addUser({ id: socket.id, questionId, userId, userName, questionName });
+
+    if(error) {
+      return cb(error);
+    }
+
+    socket.join(user.questionId);
+
+    socket.emit('system-message', {
+      user: 'system',
+      msg: `Let's welcome ${user.userName} to the room ${user.questionName}. ✨✨`,
+      time: new Date(),
+    });
+
+    socket.broadcast.to(user.questionId).emit('system-message', {
+      user: 'system',
+      msg: `${user.userName} has joined! 👏`,
+      time: new Date(),
+    });
+
+    io.to(user.questionId).emit('room-detail', {
+      room: user.questionId,
+      users: users.getCurrentUsersInMatchingRoom(user.questionId),
+    });
+
+    cb();
+  });
+
+  socket.on('message', (message) => {
+    const user = users.getUser(socket.id);
+
+    if (user && user.questionId) {
+      io.to(user.questionId).emit('system-message', {
+        user: user.userName,
+        msg: message,
+        time: new Date(),
+      });
+    } else {
+      console.log('An error has occurred with sending message.');
+    }
   });
 
   socket.on('disconnect', () => {
-    console.log('User disconnect');
-  });
+    const user = users.removeUser(socket.id);
+
+    if(user) {
+      io.to(user.questionId).emit('system-message', {
+        user: 'system',
+        msg: `${user.userName} has left the room.`,
+        time: new Date(),
+      });
+
+      io.to(user.questionId).emit('room-detail', {
+        room: user.questionId,
+        users: users.getCurrentUsersInMatchingRoom(user.questionId)});
+    }
+  })
 });
