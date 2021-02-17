@@ -85,7 +85,9 @@ chatServer.on('connection', socket => {
     socket.join(user.questionId);
 
     socket.emit('message', {
+      userId: null,
       userName: 'system',
+      roleName: 'teacher',
       msg: `${user.questionName} 에 입장하였습니다. 궁금한 부분을 질문하시면 선생님들이 해결해드려요. ✨✨`,
       time: new Date(),
     });
@@ -113,6 +115,7 @@ chatServer.on('connection', socket => {
 
     if (user && user.questionId) {
       chatServer.to(user.questionId).emit('message', {
+        userId: user.userId,
         userName: user.userName,
         roleName: user.roleName,
         msg: message,
