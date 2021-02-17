@@ -4,4 +4,5 @@ export class UserDTO {
   questionId: string;
   userName?: string;
   questionName?: string;
+  roleName?: string;
 }

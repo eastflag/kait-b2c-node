@@ -74,9 +74,9 @@ const chatServer = io.of('/chatServer');
 chatServer.on('connection', socket => {
   console.log('User connected');
 
-  socket.on('join', ({ questionId, userId, userName, questionName }, cb) => {
+  socket.on('join', ({ questionId, userId, userName, questionName, roleName }, cb) => {
     console.log('join');
-    const { error, user } = users.addUser({ id: socket.id, questionId, userId, userName, questionName });
+    const { error, user } = users.addUser({ id: socket.id, questionId, userId, userName, questionName, roleName });
 
     if(error) {
       return cb(error);
@@ -85,21 +85,23 @@ chatServer.on('connection', socket => {
     socket.join(user.questionId);
 
     socket.emit('message', {
-      user: 'system',
-      msg: `Let's welcome ${user.userName} to the room ${user.questionName}. ✨✨`,
+      userName: 'system',
+      msg: `${user.questionName} 에 입장하였습니다. 궁금한 부분을 질문하시면 선생님들이 해결해드려요. ✨✨`,
       time: new Date(),
     });
 
-    socket.broadcast.to(user.questionId).emit('message', {
+    // 입장, 퇴장 정보는 보내지 않는다.
+/*    socket.broadcast.to(user.questionId).emit('message', {
       user: 'system',
       msg: `${user.userName} has joined! 👏`,
       time: new Date(),
-    });
+    });*/
 
-    chatServer.to(user.questionId).emit('room-detail', {
+    // 방에 조인한 유저 정보들
+/*    chatServer.to(user.questionId).emit('room-detail', {
       room: user.questionId,
       users: users.getCurrentUsersInMatchingRoom(user.questionId),
-    });
+    });*/
 
     cb();
   });
@@ -112,6 +114,7 @@ chatServer.on('connection', socket => {
     if (user && user.questionId) {
       chatServer.to(user.questionId).emit('message', {
         userName: user.userName,
+        roleName: user.roleName,
         msg: message,
         time: new Date(),
       });
@@ -124,15 +127,17 @@ chatServer.on('connection', socket => {
     const user = users.removeUser(socket.id);
 
     if(user) {
-      chatServer.to(user.questionId).emit('message', {
+      // 퇴장 정보를 보내지 않는다.
+/*      chatServer.to(user.questionId).emit('message', {
         userName: 'system',
         msg: `${user.userName} has left the room.`,
         time: new Date(),
-      });
+      });*/
 
-      chatServer.to(user.questionId).emit('room-detail', {
+      // 방에 조인한 유저 정보들
+/*      chatServer.to(user.questionId).emit('room-detail', {
         room: user.questionId,
-        users: users.getCurrentUsersInMatchingRoom(user.questionId)});
+        users: users.getCurrentUsersInMatchingRoom(user.questionId)});*/
     }
   })
 });
