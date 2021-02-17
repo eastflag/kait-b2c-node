@@ -68,8 +68,10 @@ createConnection(/*...*/).then(async connection => {
 
 }).catch(error => console.log(error));
 
-// socketio 문법
-io.of('/chatServer').on('connection', socket => {
+// socketio
+const chatServer = io.of('/chatServer');
+
+chatServer.on('connection', socket => {
   console.log('User connected');
 
   socket.on('join', ({ questionId, userId, userName, questionName }, cb) => {
@@ -82,19 +84,19 @@ io.of('/chatServer').on('connection', socket => {
 
     socket.join(user.questionId);
 
-    socket.emit('system-message', {
+    socket.emit('message', {
       user: 'system',
       msg: `Let's welcome ${user.userName} to the room ${user.questionName}. ✨✨`,
       time: new Date(),
     });
 
-    socket.broadcast.to(user.questionId).emit('system-message', {
+    socket.broadcast.to(user.questionId).emit('message', {
       user: 'system',
       msg: `${user.userName} has joined! 👏`,
       time: new Date(),
     });
 
-    io.to(user.questionId).emit('room-detail', {
+    chatServer.to(user.questionId).emit('room-detail', {
       room: user.questionId,
       users: users.getCurrentUsersInMatchingRoom(user.questionId),
     });
@@ -103,11 +105,13 @@ io.of('/chatServer').on('connection', socket => {
   });
 
   socket.on('message', (message) => {
+    console.log('message received: ', message);
     const user = users.getUser(socket.id);
+    console.log(user);
 
     if (user && user.questionId) {
-      io.to(user.questionId).emit('system-message', {
-        user: user.userName,
+      chatServer.to(user.questionId).emit('message', {
+        userName: user.userName,
         msg: message,
         time: new Date(),
       });
@@ -120,13 +124,13 @@ io.of('/chatServer').on('connection', socket => {
     const user = users.removeUser(socket.id);
 
     if(user) {
-      io.to(user.questionId).emit('system-message', {
-        user: 'system',
+      chatServer.to(user.questionId).emit('message', {
+        userName: 'system',
         msg: `${user.userName} has left the room.`,
         time: new Date(),
       });
 
-      io.to(user.questionId).emit('room-detail', {
+      chatServer.to(user.questionId).emit('room-detail', {
         room: user.questionId,
         users: users.getCurrentUsersInMatchingRoom(user.questionId)});
     }

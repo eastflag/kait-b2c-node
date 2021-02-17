@@ -39,7 +39,10 @@ const removeUser = (id) => {
   return user;
 };
 
-const getUser = (id) => users[id];
+const getUser = (id) =>{
+  const user = users.find(item => item.id === id);
+  return user;
+};
 
 const getCurrentUsersInMatchingRoom = (questionId) => {
   let matchingUsers = [];
