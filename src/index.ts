@@ -10,6 +10,7 @@ const socketIO = require('socket.io');
 
 import {User} from "./entity/User";
 import {Question} from "./entity/Question";
+import {ChatDAO} from "./dao/ChatDAO";
 
 
 const app = express();
@@ -84,13 +85,14 @@ chatServer.on('connection', socket => {
 
     socket.join(user.questionId);
 
-    socket.emit('message', {
+    // 조인시 보내는 웰컴 메시지
+/*    socket.emit('message', {
       userId: null,
       userName: 'system',
       roleName: 'teacher',
       msg: `${user.questionName} 에 입장하였습니다. 궁금한 부분을 질문하시면 선생님들이 해결해드려요. ✨✨`,
       time: new Date(),
-    });
+    });*/
 
     // 입장, 퇴장 정보는 보내지 않는다.
 /*    socket.broadcast.to(user.questionId).emit('message', {
@@ -114,13 +116,15 @@ chatServer.on('connection', socket => {
     console.log(user);
 
     if (user && user.questionId) {
-      chatServer.to(user.questionId).emit('message', {
+      const chat = {
         userId: user.userId,
         userName: user.userName,
         roleName: user.roleName,
         msg: message,
         time: new Date(),
-      });
+      }
+      chatServer.to(user.questionId).emit('message', chat);
+      ChatDAO.insertChat({...chat, questionId: user.questionId});
     } else {
       console.log('An error has occurred with sending message.');
     }

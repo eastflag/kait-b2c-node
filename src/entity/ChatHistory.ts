@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 
+// 채팅 메시지 히스토리
 @Entity("chat_history")
 export class ChatHistory {
   @PrimaryGeneratedColumn()
@@ -17,8 +18,14 @@ export class ChatHistory {
   userId: number;
 
   @Column()
-  message: string;
+  userName: string;
 
-  @CreateDateColumn()
-  created: Date;
+  @Column()
+  roleName: string;
+
+  @Column()
+  msg: string;
+
+  @Column()
+  time: Date;
 }
