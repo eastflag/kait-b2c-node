@@ -11,42 +11,43 @@ export class ChatDAO {
       .execute();
   }
 
-  static selectRoom = ({userId}) => {
+  static selectRoom = ({questionId, userId}) => {
     return getConnection().createQueryBuilder()
       .select("room_user")
       .from(RoomUser, "room_user")
-      .where("userId = :userId", {userId})
+      .where("questionId = :questionId and userId = :userId", {questionId, userId})
       .getOne();
   }
 
-  static insertRoom = ({questionId, questionName, userId, isJoined, chatHistoryId}) => {
+  static insertRoom = ({questionId, questionName, userId, isJoined}) => {
     return getConnection().createQueryBuilder()
       .insert()
       .into(RoomUser)
-      .values({questionId, questionName, userId, isJoined, chatHistoryId})
+      .values({questionId, questionName, userId, isJoined})
       .execute();
   }
 
-  static updateRoom = ({questionId, isJoined, chatHistoryId}) => {
+  static updateRoom = ({questionId, userId, isJoined}) => {
     return getConnection().createQueryBuilder()
       .update(RoomUser)
       .set({
-        isJoined, chatHistoryId
+        isJoined
       })
-      .where("questionId = :questionId", {questionId})
+      .where("questionId = :questionId and userId = :userId", {questionId, userId})
       .execute();
   }
 
-  static joinRoom = async ({questionId, questionName, userId, isJoined, chatHistoryId}) => {
-    const room = await ChatDAO.selectRoom({userId});
+  static joinRoom = async ({questionId, questionName, userId, isJoined}) => {
+    const room = await ChatDAO.selectRoom({questionId, userId});
+    console.log('join: ', room);
     if (room) {
-      await ChatDAO.updateRoom({questionId, isJoined, chatHistoryId})
+      await ChatDAO.updateRoom({questionId, userId, isJoined})
     } else {
-      await ChatDAO.insertRoom({questionId, questionName, userId, isJoined, chatHistoryId})
+      await ChatDAO.insertRoom({questionId, questionName, userId, isJoined})
     }
   }
 
-  static leaveRoom = async ({questionId, isJoined, chatHistoryId}) => {
-    await ChatDAO.updateRoom({questionId, isJoined, chatHistoryId})
+  static leaveRoom = async ({questionId, userId, isJoined}) => {
+    await ChatDAO.updateRoom({questionId, userId, isJoined})
   }
 }

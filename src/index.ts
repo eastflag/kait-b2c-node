@@ -85,6 +85,11 @@ chatServer.on('connection', socket => {
 
     socket.join(user.questionId);
 
+    // 학생이 조인시 DB 저장
+    if (user.roleName === 'user') {
+      ChatDAO.joinRoom({ questionId, userId, questionName, isJoined: true })
+    }
+
     // 조인시 보내는 웰컴 메시지
 /*    socket.emit('message', {
       userId: null,
