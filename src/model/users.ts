@@ -1,5 +1,6 @@
 import {UserDTO} from "../dto/UserDTO";
 
+const allUsers = [];
 const users: Array<UserDTO> = []; // {socketId: {socketId, questionId, userId}, ,,,}
 
 const getUserDetailsByUserId = (userId: string) => {
@@ -34,7 +35,9 @@ const addUser = (user: UserDTO) => {
 const removeUser = (id) => {
   const user = users.find(item => item.id === id);
   const index = users.findIndex(user => user.id === id);
-  users.splice(index, 1);
+  if (index > -1) {
+    users.splice(index, 1);
+  }
 
   return user;
 };
@@ -57,4 +60,16 @@ const getCurrentUsersInMatchingRoom = (questionId) => {
   return matchingUsers;
 };
 
-export default { addUser, removeUser, getUser, getCurrentUsersInMatchingRoom };
+const addAllUser = (id) => {
+  allUsers.push(id);
+}
+
+const removeAllUser = (id) => {
+  const index = allUsers.findIndex(item => item.id === id);
+  if (index > -1) {
+    allUsers.splice(index, 1);
+  }
+}
+
+export default { addUser, removeUser, getUser, getCurrentUsersInMatchingRoom,
+  addAllUser, removeAllUser };

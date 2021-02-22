@@ -115,6 +115,11 @@ chatServer.on('connection', socket => {
     cb();
   });
 
+  socket.on('leave', ({ questionId }) => {
+    users.removeUser(socket.id);
+    socket.leave(questionId)
+  });
+
   socket.on('message', (message) => {
     console.log('message received: ', message);
     const user = users.getUser(socket.id);
