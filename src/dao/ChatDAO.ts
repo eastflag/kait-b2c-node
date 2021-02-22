@@ -46,8 +46,4 @@ export class ChatDAO {
       await ChatDAO.insertRoom({questionId, questionName, userId, isJoined})
     }
   }
-
-  static leaveRoom = async ({questionId, userId, isJoined}) => {
-    await ChatDAO.updateRoom({questionId, userId, isJoined})
-  }
 }

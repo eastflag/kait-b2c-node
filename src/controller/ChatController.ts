@@ -1,8 +1,10 @@
-import {getConnection} from "typeorm";
+import {getConnection, getManager} from "typeorm";
 import {ChatHistory} from "../entity/ChatHistory";
 import {RoomUser} from "../entity/RoomUser";
 import {ChatDAO} from "../dao/ChatDAO";
 import {ResultVo} from "../dto/ResultVo";
+import {Question} from "../entity/Question";
+import {Answer} from "../entity/Answer";
 
 export class ChatController {
   static getChatHistory = async (req, res) => {
@@ -26,24 +28,28 @@ export class ChatController {
   static getRoomsOfUser = async (req, res) => {
     const {userId} = req.query;
 
-    const db = getConnection().getRepository(RoomUser)
-      .createQueryBuilder('room_user')
-      .where('userId = :userId and isJoined = true', {userId})
+    const entityManager = getManager();
+    const rawData = await entityManager.query(`
+      select RU.*,
+             (select CH.roleName from chat_history CH where CH.questionId = RU.questionId 
+               ORDER BY CH.time desc LIMIT 1) as roleName
+      from room_user RU
+      where RU.userId = ${userId} and RU.isJoined = true
+    `);
 
-    const chatHistories = await db.getMany();
-    return res.send(chatHistories);
+    res.send(rawData);
   }
 
   // 선생님: 모든 학생이 조인한 방 리스트
   static getRoomsOfTeacher = async (req, res) => {
-    const {userId} = req.query;
+    const entityManager = getManager();
+    const rawData = await entityManager.query(`
+      select distinct(RU.questionId), RU.questionName,
+          (select CH.roleName from chat_history CH where CH.questionId = RU.questionId 
+            ORDER BY CH.time desc LIMIT 1) as roleName
+      from room_user RU where RU.isJoined = true
+    `);
 
-    const db = getConnection().getRepository(RoomUser)
-      .createQueryBuilder('room_user')
-      .where('isJoined = true', {userId})
-      .groupBy('questionId')
-
-    const chatHistories = await db.getMany();
-    return res.send(chatHistories);
+    res.send(rawData);
   }
 }
