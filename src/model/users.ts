@@ -60,8 +60,18 @@ const getCurrentUsersInMatchingRoom = (questionId) => {
   return matchingUsers;
 };
 
-const addAllUser = (id) => {
-  allUsers.push(id);
+const addAllUser = (user) => {
+  const {id, userId, roleName} = user;
+  if (!userId || !roleName) {
+    return {error: 'userId or roleName is null'}
+  }
+  const existUser = allUsers.find(item => item.userId == userId);
+  if (existUser) {
+    return {error: 'userId exists'}
+  }
+  allUsers.push(user);
+  console.log(allUsers);
+  return {user}
 }
 
 const removeAllUser = (id) => {

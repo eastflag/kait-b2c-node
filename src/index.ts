@@ -75,6 +75,13 @@ const chatServer = io.of('/chatServer');
 chatServer.on('connection', socket => {
   console.log('User connected');
 
+  socket.on('login', ({userId, roleName}, cb) => {
+    const {error, user} = users.addAllUser({id: socket.id, userId, roleName});
+    if (error) {
+      return cb(error);
+    }
+  });
+
   socket.on('join', ({ questionId, userId, userName, questionName, roleName }, cb) => {
     console.log('join');
     const { error, user } = users.addUser({ id: socket.id, questionId, userId, userName, questionName, roleName });

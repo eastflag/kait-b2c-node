@@ -25,6 +25,10 @@ export class RoomUser {
   @Column({nullable: true})
   chatHistoryId: number;
 
+  // 읽음 여뷰
+  @Column({nullable: true})
+  isRead: boolean;
+
   // 방 참여 일자
   @CreateDateColumn()
   created: Date;
