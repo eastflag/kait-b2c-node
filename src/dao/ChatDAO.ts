@@ -27,21 +27,21 @@ export class ChatDAO {
       .execute();
   }
 
-  static updateRoom = ({questionId, userId, isJoined}) => {
+  static updateRoom = ({questionId, userId, isJoined, isRead}) => {
     return getConnection().createQueryBuilder()
       .update(RoomUser)
       .set({
-        isJoined
+        isJoined, isRead
       })
       .where("questionId = :questionId and userId = :userId", {questionId, userId})
       .execute();
   }
 
-  static joinRoom = async ({questionId, questionName, userId, isJoined}) => {
+  static joinRoom = async ({questionId, questionName, userId, isJoined, isRead}) => {
     const room = await ChatDAO.selectRoom({questionId, userId});
     console.log('join: ', room);
     if (room) {
-      await ChatDAO.updateRoom({questionId, userId, isJoined})
+      await ChatDAO.updateRoom({questionId, userId, isJoined, isRead})
     } else {
       await ChatDAO.insertRoom({questionId, questionName, userId, isJoined})
     }

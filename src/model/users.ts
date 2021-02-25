@@ -46,7 +46,7 @@ const addAllUser = (user) => {
   if (!userId || !roleName) {
     return {error: 'userId or roleName is null'}
   }
-  const existUser = allUsers.find(item => item.userId == userId);
+  const existUser = allUsers.find(item => item.id == id);
   if (existUser) {
     return {error: 'userId exists'}
   }

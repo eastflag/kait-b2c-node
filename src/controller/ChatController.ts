@@ -20,7 +20,7 @@ export class ChatController {
 
   static leaveRoom = async (req, res) => {
     const {questionId, userId, isJoined} = req.body;
-    await ChatDAO.updateRoom({questionId, userId, isJoined})
+    await ChatDAO.updateRoom({questionId, userId, isJoined, isRead: null})
     return res.send(new ResultVo(0, 'success'));
   }
 
