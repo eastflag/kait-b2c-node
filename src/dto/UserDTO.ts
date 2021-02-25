@@ -1,6 +1,6 @@
 export class UserDTO {
   id: string;
-  userId: string;
+  userId: number;
   questionId: string;
   userName?: string;
   questionName?: string;

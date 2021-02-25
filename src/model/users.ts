@@ -1,28 +1,21 @@
 import {UserDTO} from "../dto/UserDTO";
 
-const allUsers = [];
+// 로그인한 모든 사용자 정보 저장
+const allUsers = []; // [{id: socketId, userId, roleName}]
+// 방에 조인한 socketId 별 사용자 상세 정보 저장, 소켓별 방은 한개만 가능
+// 다른 사이트에서 접속시 소켓이 다르므로 두개가 생성이 가능하다.
+// 즉, 동일한 userId 가 두개의 소켓아이디와 두개의 방이 가능하다.
 const users: Array<UserDTO> = []; // {socketId: {socketId, questionId, userId}, ,,,}
 
-const getUserDetailsByUserId = (userId: string) => {
-  if (users.length) {
-    let userResult = users.filter((user) => user.userId === userId);
-    return userResult[0];
-  }
-  return false;
-};
-
+// users
 const addUser = (user: UserDTO) => {
-  const existingUser = getUserDetailsByUserId(user.userId);
+  const existingUser = getUserDetailsById(user.id);
 
-  if(!user.userId) {
-    return { error: 'Username cannot be empty. Please return to home and try again.' };
+  if(!(user.id && user.questionId && user.userId && user.roleName)) {
+    return { error: 'questionId or userId or rolename cannot be empty.' };
   }
 
-  if (!user.questionId) {
-    return { error: 'Room cannot be empty. Please return to home and try again.' };
-  }
-
-  if (existingUser && existingUser.userId) {
+  if (existingUser) {
     return { error: 'User already exists. Please return to home and try a new one.'};
   }
 
@@ -34,7 +27,7 @@ const addUser = (user: UserDTO) => {
 
 const removeUser = (id) => {
   const user = users.find(item => item.id === id);
-  const index = users.findIndex(user => user.id === id);
+  const index = users.findIndex(item => item.id === id);
   if (index > -1) {
     users.splice(index, 1);
   }
@@ -47,19 +40,7 @@ const getUser = (id) =>{
   return user;
 };
 
-const getCurrentUsersInMatchingRoom = (questionId) => {
-  let matchingUsers = [];
-  if (users.length) {
-    users.forEach((user) => {
-      if (user.questionId === questionId) {
-        matchingUsers.push(user);
-      }
-    });
-  }
-
-  return matchingUsers;
-};
-
+// All users
 const addAllUser = (user) => {
   const {id, userId, roleName} = user;
   if (!userId || !roleName) {
@@ -81,5 +62,30 @@ const removeAllUser = (id) => {
   }
 }
 
-export default { addUser, removeUser, getUser, getCurrentUsersInMatchingRoom,
-  addAllUser, removeAllUser };
+const getAllUsers = () => allUsers;
+const getAllUserIds = () => allUsers.map(user => user.userId);
+
+// functions
+const getUsersOfRoom = (questionId) => {
+  return users.filter(user => user.questionId == questionId);
+};
+
+const getUserIdsOfRoom = (questionId) => {
+  return users.filter(user => user.questionId == questionId)
+    .map(item => item.userId);
+};
+
+const getUserDetailsById = (id: string) => {
+  if (users.length) {
+    let user = users.find((user) => user.id == id);
+    return user;
+  }
+  return false;
+};
+
+const getUsersByIds = ids => {
+  return allUsers.filter(user => ids.indexOf(user.userId) >= 0);
+}
+
+export default { addUser, removeUser, getUser, getUsersOfRoom, getUserIdsOfRoom,
+  addAllUser, removeAllUser, getAllUsers, getAllUserIds, getUsersByIds };

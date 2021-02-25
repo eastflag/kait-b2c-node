@@ -127,23 +127,47 @@ chatServer.on('connection', socket => {
     socket.leave(questionId)
   });
 
-  socket.on('message', (message) => {
+  socket.on('message', async (message) => {
     console.log('message received: ', message);
     const user = users.getUser(socket.id);
     console.log(user);
 
-    if (user && user.questionId) {
-      const chat = {
-        userId: user.userId,
-        userName: user.userName,
-        roleName: user.roleName,
-        msg: message,
-        time: new Date(),
-      }
-      chatServer.to(user.questionId).emit('message', chat);
-      ChatDAO.insertChat({...chat, questionId: user.questionId});
-    } else {
+    if (!user || !user.questionId) {
       console.log('An error has occurred with sending message.');
+      return;
+    }
+
+    // 채팅 히스토리 저장
+    const chat = {
+      userId: user.userId,
+      userName: user.userName,
+      roleName: user.roleName,
+      msg: message,
+      time: new Date(),
+    }
+    chatServer.to(user.questionId).emit('message', chat);
+    ChatDAO.insertChat({...chat, questionId: user.questionId});
+
+    // 선생님일 경우: DB에서 현재방 join 참여자를 구하고,
+    // DB join - 현재방 참여자 => 읾음 처리를 읽지 않음으로 처리
+    // (AllUsers) - (현재방 참여자) => 노티 전송
+    if (user.roleName === 'teacher') {
+      const dbRoomStudents = await ChatDAO.getUserOfRoom({questionId: user.questionId})
+      const dbRoomStudentIds = dbRoomStudents.map(item => item.userId); // number array
+
+      const roomUserIds = users.getUserIdsOfRoom(user.questionId); // userDTO array
+
+      const notReadStudentIds = dbRoomStudentIds.filter(userId => roomUserIds.indexOf(userId) < 0)
+      ChatDAO.setNotRead({questionId: user.questionId, userIds: notReadStudentIds});
+
+      const allUserIds = users.getAllUserIds();
+      const notiUserIds = allUserIds.filter(userId => roomUserIds.indexOf(userId) < 0);
+
+      const notiUsers = users.getUsersByIds(notiUserIds);
+
+      notiUsers.forEach(user => {
+        chatServer.to(user.id).emit('alarm_by_teacher', {questionId: user.questionId});
+      })
     }
   });
 

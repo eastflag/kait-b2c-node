@@ -46,4 +46,22 @@ export class ChatDAO {
       await ChatDAO.insertRoom({questionId, questionName, userId, isJoined})
     }
   }
+
+  static getUserOfRoom = async ({questionId}) => {
+    return getConnection().createQueryBuilder()
+      .select("room_user")
+      .from(RoomUser, "room_user")
+      .where("questionId = :questionId and isJoined = 1", {questionId})
+      .getMany();
+  }
+
+  static setNotRead = async ({questionId, userIds}) => {
+    await getConnection().createQueryBuilder()
+      .update(RoomUser)
+      .set({
+        isRead: false
+      })
+      .where("questionId = :questionId and userId IN (:userIds)", {questionId, userIds})
+      .execute();
+  }
 }
