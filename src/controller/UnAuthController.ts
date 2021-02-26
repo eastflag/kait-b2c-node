@@ -44,7 +44,7 @@ export class UnAuthController {
   }
 
   static signUp = async (req, res) => {
-    const {email, password} = req.body;
+    const {email, name, password} = req.body;
 
     try {
       const user =await getConnection().getRepository(User)
@@ -58,7 +58,7 @@ export class UnAuthController {
         await getConnection().createQueryBuilder()
           .insert()
           .into(User)
-          .values({email, password})
+          .values({email, name, password})
           .execute();
         const result = new ResultVo(0, "success");
         res.send(result);
