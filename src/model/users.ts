@@ -64,8 +64,9 @@ const removeAllUser = (id) => {
 
 const getAllUsers = () => allUsers;
 const getAllUserIds = () => allUsers.map(user => user.userId);
+const getAllTeacherIds = () => allUsers.filter(item => item.roleName === 'teacher')
+  .map(user => user.userId);
 
-// functions
 const getUsersOfRoom = (questionId) => {
   return users.filter(user => user.questionId == questionId);
 };
@@ -75,6 +76,16 @@ const getUserIdsOfRoom = (questionId) => {
     .map(item => item.userId);
 };
 
+const getTeacherIdsOfRoom = (questionId) => {
+  return users.filter(user => user.questionId == questionId && user.roleName === 'teacher')
+    .map(item => item.userId);
+};
+
+const getUsersByIds = ids => {
+  return allUsers.filter(user => ids.indexOf(user.userId) >= 0);
+}
+
+// functions
 const getUserDetailsById = (id: string) => {
   if (users.length) {
     let user = users.find((user) => user.id == id);
@@ -83,9 +94,8 @@ const getUserDetailsById = (id: string) => {
   return false;
 };
 
-const getUsersByIds = ids => {
-  return allUsers.filter(user => ids.indexOf(user.userId) >= 0);
-}
-
-export default { addUser, removeUser, getUser, getUsersOfRoom, getUserIdsOfRoom,
-  addAllUser, removeAllUser, getAllUsers, getAllUserIds, getUsersByIds };
+export default {
+  addUser, removeUser, getUser,
+  addAllUser, removeAllUser, getAllUsers, getAllUserIds, getAllTeacherIds,
+  getUsersOfRoom, getUserIdsOfRoom, getTeacherIdsOfRoom, getUsersByIds
+};

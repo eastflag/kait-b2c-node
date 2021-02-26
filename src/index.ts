@@ -149,7 +149,7 @@ chatServer.on('connection', socket => {
     ChatDAO.insertChat({...chat, questionId: user.questionId});
 
     // 선생님일 경우: DB에서 현재방 join 참여자를 구하고,
-    // DB join - 현재방 참여자 => 읾음 처리를 읽지 않음으로 처리
+    // DB join - 현재방 참여자 => 읾음 처리를 읽지 않음으로 처리 (isRead = 0)
     // (AllUsers) - (현재방 참여자) => 노티 전송
     if (user.roleName === 'teacher') {
       const dbRoomStudents = await ChatDAO.getUserOfRoom({questionId: user.questionId})
@@ -166,7 +166,24 @@ chatServer.on('connection', socket => {
       const notiUsers = users.getUsersByIds(notiUserIds);
 
       notiUsers.forEach(user => {
-        chatServer.to(user.id).emit('alarm_by_teacher', {questionId: user.questionId});
+        chatServer.to(user.id).emit('alarm_by_teacher');
+      })
+    }
+
+    // user 일 경우 현재 접속중인 모든 선생님에게 알람 전송
+    if (user.roleName === 'user') {
+      const allTeacherIds = users.getAllTeacherIds();
+      const roomTeacherIds = users.getTeacherIdsOfRoom(user.questionId);
+      const notiTeacherIds = allTeacherIds.filter(id => roomTeacherIds.indexOf(id) < 0);
+
+      const notiUsers = users.getUsersByIds(notiTeacherIds);
+
+      console.log(allTeacherIds);
+      console.log(roomTeacherIds);
+      console.log(notiUsers);
+
+      notiUsers.forEach(user => {
+        chatServer.to(user.id).emit('alarm_by_user');
       })
     }
   });
