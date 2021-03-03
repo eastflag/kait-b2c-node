@@ -5,12 +5,14 @@ import chapter from './chapter';
 import question from './question';
 import answer from './answer';
 import unauth from './unauth';
+import image from './image';
 import chat from './chat';
 import jwtUtils from "../utils/jwtUtils";
 
 const routes = Router();
 
 routes.use('/unauth', unauth);
+routes.use('/image', image);
 routes.use('/user', jwtUtils.verifyToken, user);
 routes.use('/textbook', jwtUtils.verifyToken, textbook);
 routes.use('/chapter', jwtUtils.verifyToken, chapter);
