@@ -11,7 +11,7 @@ export class Question {
   page_number: number;
 
   // 항목명
-  @Column({length: 100})
+  @Column({length: 20})
   name: string;
 
   // 정답 보기
@@ -19,10 +19,10 @@ export class Question {
   examples: string;
 
   // 라텍스 수식: 빈칸은 골뱅이
-  @Column({length: 100})
+  @Column({length: 500})
   equations: string;
 
-  @Column({length: 500, nullable: true})
+  @Column({length: 100, nullable: true})
   answers: string;
 
   @CreateDateColumn()
