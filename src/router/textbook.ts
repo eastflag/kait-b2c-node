@@ -3,7 +3,8 @@ import {TextbookController} from "../controller/TextbookController";
 
 const routes = Router();
 
-routes.get('', TextbookController.getTextBook);
+routes.get('', TextbookController.getTextBooks);
+routes.get('/:id', TextbookController.getTextBook);
 routes.post('', TextbookController.addTextbook);
 
 export default routes;

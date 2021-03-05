@@ -1,6 +1,7 @@
-import {getConnection} from "typeorm";
+import {createQueryBuilder, getConnection} from "typeorm";
 import {Chapter} from "../entity/Chapter";
 import {ResultVo} from "../dto/ResultVo";
+import {Textbook} from "../entity/Textbook";
 
 export class ChapterController {
   static getChapterByTextbookId = async (req, res) => {
@@ -16,9 +17,10 @@ export class ChapterController {
 
   static getChapter = async (req, res) => {
     const {id} = req.params;
-    const db = getConnection().getRepository(Chapter)
-      .createQueryBuilder('chapter')
-      .where('chapter.id = :id', {id})
+    const db = getConnection().getRepository(Textbook)
+      .createQueryBuilder('textbook')
+      .innerJoinAndSelect('textbook.chapters', 'chapter')
+      .where('chapter.id = :id', {id});
 
     const chapter = await db.getOne();
 
