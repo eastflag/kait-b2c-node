@@ -1,5 +1,6 @@
 import {getConnection, getManager} from "typeorm";
 import {Image} from "../entity/Image";
+import {ResultVo} from "../dto/ResultVo";
 
 export class ImageController {
   static uploadImage = async (req, res) => {
@@ -9,16 +10,20 @@ export class ImageController {
     const dataBinary = req.file.buffer;
     // console.log(datauri);
 
+    let imageVo: Image = new Image();
+    imageVo.data = dataBinary;
+    imageVo.originalname = req.file.originalname;
+    imageVo.mimetype = req.file.mimetype;
+
     await getConnection().createQueryBuilder()
       .insert()
       .into(Image)
-      .values({
-        originalname: req.file.originalname,
-        mimetype: req.file.mimetype,
-        data: dataBinary
-      })
+      .values(imageVo)
       .execute();
-    res.send('success');
+
+    const resultVo = new ResultVo(0, 'success');
+    resultVo.data = imageVo.id;
+    res.send(resultVo);
   }
 
   static downloadImage = async (req, res) => {
@@ -29,7 +34,7 @@ export class ImageController {
       .where('image.id = :id', {id})
     const result = await db.getOne();
 
-    console.log(result.data);
+    // console.log(result.data);
     // const img = Buffer.from(result.data, 'base64');
     // console.log(img);
     // console.log(img.length);

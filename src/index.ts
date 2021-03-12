@@ -127,8 +127,9 @@ chatServer.on('connection', socket => {
     socket.leave(questionId)
   });
 
-  socket.on('message', async (message) => {
-    console.log('message received: ', message);
+  socket.on('message', async (data) => {
+    // data = {type: 'text or image', msg: 'content or image id'}
+    console.log('message received: ', data);
     const user = users.getUser(socket.id);
     console.log(user);
 
@@ -142,7 +143,8 @@ chatServer.on('connection', socket => {
       userId: user.userId,
       userName: user.userName,
       roleName: user.roleName,
-      msg: message,
+      type: data.type,
+      msg: data.msg,
       time: new Date(),
     }
     chatServer.to(user.questionId).emit('message', chat);
@@ -178,9 +180,9 @@ chatServer.on('connection', socket => {
 
       const notiUsers = users.getUsersByIds(notiTeacherIds);
 
-      console.log(allTeacherIds);
-      console.log(roomTeacherIds);
-      console.log(notiUsers);
+      // console.log(allTeacherIds);
+      // console.log(roomTeacherIds);
+      // console.log(notiUsers);
 
       notiUsers.forEach(user => {
         chatServer.to(user.id).emit('alarm_by_user');

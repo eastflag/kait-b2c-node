@@ -23,6 +23,10 @@ export class ChatHistory {
   @Column()
   roleName: string;
 
+  // text, image
+  @Column({default: 'text'})
+  type: string;
+
   @Column()
   msg: string;
 

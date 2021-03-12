@@ -11,7 +11,7 @@ export class TextbookController {
       .where('textbook.id = :id', {id})
 
     const textbook = await db.getOne();
-    console.log(textbook);
+    // console.log(textbook);
 
     res.send(textbook);
   }

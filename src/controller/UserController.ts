@@ -44,7 +44,7 @@ export class UserController {
       answer.score = data.score
       return answer;
     })
-    console.log(answerList);
+    // console.log(answerList);
 
     await getConnection().createQueryBuilder().insert().into(Answer).values(answerList).execute();
 

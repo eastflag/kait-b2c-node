@@ -20,7 +20,7 @@ const addUser = (user: UserDTO) => {
   }
 
   users.push(user);
-  console.log(users);
+  // console.log(users);
 
   return { user };
 };
@@ -51,7 +51,7 @@ const addAllUser = (user) => {
     return {error: 'userId exists'}
   }
   allUsers.push(user);
-  console.log(allUsers);
+  // console.log(allUsers);
   return {user}
 }
 

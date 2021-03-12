@@ -3,11 +3,11 @@ import {ChatHistory} from "../entity/ChatHistory";
 import {RoomUser} from "../entity/RoomUser";
 
 export class ChatDAO {
-  static insertChat = async ({questionId, userId, userName, roleName, msg, time}) => {
+  static insertChat = async ({questionId, userId, userName, roleName, type, msg, time}) => {
     await getConnection().createQueryBuilder()
       .insert()
       .into(ChatHistory)
-      .values({questionId, userId, userName, roleName, msg, time})
+      .values({questionId, userId, userName, roleName, type, msg, time})
       .execute();
   }
 
@@ -39,7 +39,7 @@ export class ChatDAO {
 
   static joinRoom = async ({questionId, questionName, userId, isJoined, isRead}) => {
     const room = await ChatDAO.selectRoom({questionId, userId});
-    console.log('join: ', room);
+    // console.log('join: ', room);
     if (room) {
       await ChatDAO.updateRoom({questionId, userId, isJoined, isRead})
     } else {
