@@ -6,7 +6,7 @@ export class AnswerController {
 
     const entityManager = getManager();
     const rawData = await entityManager.query(`
-      select count(*) as 'total', sum(score) as 'score' from answer
+      select count(*) as 'total', IFNULL(sum(score), 0) as 'score' from answer
       where questionId in (
         select id from question
         where chapterId = ${chapter_id})
