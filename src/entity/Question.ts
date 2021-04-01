@@ -15,14 +15,14 @@ export class Question {
   name: string;
 
   // 정답 보기
-  @Column({length: 100})
+  @Column({length: 100, default: ' '})
   examples: string;
 
   // 라텍스 수식: 빈칸은 골뱅이
-  @Column({length: 500})
+  @Column({length: 500, default: ' '})
   equations: string;
 
-  @Column({length: 100, nullable: true})
+  @Column({length: 100, nullable: true, default: ' '})
   answers: string;
 
   @CreateDateColumn()
