@@ -1,10 +1,7 @@
 import {getConnection, getManager} from "typeorm";
 import {ChatHistory} from "../entity/ChatHistory";
-import {RoomUser} from "../entity/RoomUser";
 import {ChatDAO} from "../dao/ChatDAO";
 import {ResultVo} from "../dto/ResultVo";
-import {Question} from "../entity/Question";
-import {Answer} from "../entity/Answer";
 
 export class ChatController {
   static getChatHistory = async (req, res) => {
@@ -24,7 +21,7 @@ export class ChatController {
     return res.send(new ResultVo(0, 'success'));
   }
 
-  // 학생: 본인이 조인한 방 리스트
+  // 학생: 본인이 조인한 방 리스트: 학생이 조인
   static getRoomsOfUser = async (req, res) => {
     const {userId} = req.query;
 
@@ -46,10 +43,41 @@ export class ChatController {
     const rawData = await entityManager.query(`
       select distinct(RU.questionId), RU.questionName,
           (select CH.roleName from chat_history CH where CH.questionId = RU.questionId 
-            ORDER BY CH.time desc LIMIT 1) as roleName
+            ORDER BY CH.time desc LIMIT 1) as roleName,
+          (select CH.isClear from chat_history CH where CH.questionId = RU.questionId 
+            ORDER BY CH.time desc LIMIT 1) as isClear
       from room_user RU where RU.isJoined = true
     `);
 
-    res.send(rawData);
+    // 학생메시지이나 선생님이 완료처리한 isClear가 true인 것은 제외한다.
+    const result = rawData.filter(item => !item.isClear);
+
+    res.send(result);
+  }
+
+  // 학생의 메시지가 맨 마지막에 위치하고 있는 경우 clear를 셋팅해서 읽음처리한다.
+  static setClearChatHistory = async (req, res) => {
+    const {questionId} = req.query;
+
+    const entityManager = getManager();
+    const rawData = await entityManager.query(`
+      select id
+      from chat_history
+      where questionId = ${questionId}
+      order by time desc
+      LIMIT 1
+    `);
+    console.log(rawData);
+
+    if (rawData.length > 0) {
+      const id = rawData[0].id;
+      await entityManager.query(`
+        update chat_history
+        set isClear = 1
+        where id = ${id}  
+      `);
+    }
+
+    res.send(new ResultVo(0, "success"));
   }
 }
