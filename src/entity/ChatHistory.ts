@@ -22,7 +22,7 @@ export class ChatHistory {
   @Column({default: 'text'})
   type: string;
 
-  @Column()
+  @Column("text")
   msg: string;
 
   @Column()
