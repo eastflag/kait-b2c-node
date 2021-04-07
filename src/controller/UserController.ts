@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const randToken = require('rand-token');
 import jwtOptions from '../config/jwtOptions';
 import {ChannelHistory} from "../entity/ChannelHistory";
+import {Textbook} from "../entity/Textbook";
 
 export class UserController {
   static getTextBook = async (req, res) => {
@@ -71,6 +72,48 @@ export class UserController {
     await getConnection().createQueryBuilder().insert().into(ChannelHistory).values({userId, questionId, type}).execute();
 
     const result = new ResultVo(0, "success");
+    res.send(result);
+  }
+
+  static getProfile = async (req, res) => {
+    const {id} = req.query;
+    const db = getConnection().getRepository(User)
+      .createQueryBuilder('user')
+      .where('id = :id', {id})
+
+    const profile = await db.getOne();
+    res.send(profile);
+  }
+
+  static modifyProfile = async (req, res) => {
+    const {id, name} = req.body;
+
+    const updateOption = {};
+    if (name) {
+      updateOption['name'] = name;
+    }
+
+    const result = await getConnection().createQueryBuilder().update(User)
+      .set(updateOption)
+      .where("id = :id", {id})
+      .execute();
+
+    res.send(result);
+  }
+
+  static modifyPassword = async (req, res) => {
+    const {id, password} = req.body;
+
+    const updateOption = {};
+    if (password) {
+      updateOption['password'] = password;
+    }
+
+    const result = await getConnection().createQueryBuilder().update(User)
+      .set(updateOption)
+      .where("id = :id", {id})
+      .execute();
+
     res.send(result);
   }
 }
