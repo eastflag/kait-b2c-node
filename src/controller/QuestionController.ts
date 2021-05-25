@@ -30,7 +30,7 @@ export class QuestionController {
 
     const entityManager = getManager();
     const rawData = await entityManager.query(`
-        select t.code, t.semester, t.name as 'textbook_name', q.page_number, q.name
+        select t.code, t.semester, t.name as 'textbook_name', q.page_number, q.name, c.name as 'categoryName'
         from textbook t inner join chapter c on t.id = c.textbookId
             inner join question q on c.id = q.chapterId
         where q.id = ${questionId};
