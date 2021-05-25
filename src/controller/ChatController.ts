@@ -41,18 +41,20 @@ export class ChatController {
   static getRoomsOfTeacher = async (req, res) => {
     const entityManager = getManager();
     const rawData = await entityManager.query(`
-      select distinct(RU.questionId), RU.questionName,
-          (select CH.roleName from chat_history CH where CH.questionId = RU.questionId 
-            ORDER BY CH.time desc LIMIT 1) as roleName,
-          (select CH.isClear from chat_history CH where CH.questionId = RU.questionId 
-            ORDER BY CH.time desc LIMIT 1) as isClear
-      from room_user RU where RU.isJoined = true
+        select CH.id, RU.questionId, RU.questionName, CH.roleName, CH.isClear, CH.time from
+            (select * from chat_history
+             WHERE chat_history.id in (select max(id) from chat_history GROUP BY questionId)
+            ) CH left join
+            (select * from room_user
+             GROUP BY questionId
+            ) RU on CH.questionId = RU.questionId
+        ORDER BY CH.id desc
     `);
 
     // 학생메시지이나 선생님이 완료처리한 isClear가 true인 것은 제외한다.
-    const result = rawData.filter(item => !item.isClear);
+    // const result = rawData.filter(item => !item.isClear);
 
-    res.send(result);
+    res.send(rawData);
   }
 
   // 학생의 메시지가 맨 마지막에 위치하고 있는 경우 clear를 셋팅해서 읽음처리한다.
